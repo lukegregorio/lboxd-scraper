@@ -2,7 +2,7 @@ import requests
 import bs4
 import json
 
-def load_script_tags(url):
+def load_script_tags(url: str) -> dict:
     """
     Load the script tags from the url
 
@@ -13,8 +13,8 @@ def load_script_tags(url):
 
     Returns
     -------
-    list
-        A list of script tags
+    dict
+        A dict of script tags
     """
 
     soup = bs4.BeautifulSoup(requests.get(url).text, 'html.parser')
@@ -30,7 +30,7 @@ def load_script_tags(url):
     return data
 
 
-def get_film_director(data):
+def get_film_director(data: dict) -> list:
     """
     Get the director(s) of the film
     
@@ -53,7 +53,7 @@ def get_film_director(data):
     return directors
 
 
-def get_film_genre(data):
+def get_film_genre(data: dict) -> list:
     """
     Get the genre(s) of the film
     
@@ -71,7 +71,7 @@ def get_film_genre(data):
     return data['genre'] 
 
 
-def get_film_country(data):
+def get_film_country(data: dict) -> list:
     """
     Get the country(s) of the film
 
@@ -94,7 +94,7 @@ def get_film_country(data):
     return countries 
 
 
-def get_film_year(data):
+def get_film_year(data: dict) -> str:
     """
     Get the year the film was released
 
@@ -114,7 +114,7 @@ def get_film_year(data):
             return dict['startDate']
 
 
-def get_film_language(url):
+def get_film_language(url: str) -> list:
     """
     Get the language(s) of the film
 
@@ -146,9 +146,9 @@ def get_film_language(url):
 # letterboxd list functions
 
 # Get the HTML from the page
-def get_html(url):
+def get_html(url: str) -> str:
     """
-    Get the HTML from the page
+    Get the HTML from the page of a letterboxd list
     
     Parameters
     ----------
@@ -166,7 +166,7 @@ def get_html(url):
 
 
 # Get the list of films from the HTML
-def get_films(html):
+def get_films(html: str) -> list[str]:
     """
     Get the list of films from the HTML
 
