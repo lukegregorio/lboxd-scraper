@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: letterboxd-scraper-luke-gregorio
+Version: 0.0.1
+Summary: A package with functions to scrape data from letterboxd
+Author-email: Lukr Gregorio <lukegregorio99@gmail.com>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# letterboxd-scraper
+
+Get data from letterboxd in a flash.
+
+## Installation
+
+```bash
+pip install letterboxd-scraper
+```
+
+## Usage
+
+```python
+director = get_director("letterboxd.com/movie/parasite-2019/")
+print(director)
+``````
