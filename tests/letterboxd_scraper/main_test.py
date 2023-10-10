@@ -6,5 +6,5 @@ def test_load_script_tags():
 
     data = letterboxd_scraper.load_script_tags(url)
 
-    assert data['name'] == 'Parasite'
+    assert data['name'] == 'Not Parasite'
     assert data['@type'] == 'Movie'
