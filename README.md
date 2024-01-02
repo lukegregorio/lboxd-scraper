@@ -1,6 +1,6 @@
 # letterboxd-scraper
 
-Get data from letterboxd in a flash.
+Get data from letterboxd in a flash. Example python repo project.
 
 ## Installation
 
