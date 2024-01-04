@@ -62,11 +62,9 @@ def test_get_film_language():
 
     url = 'https://letterboxd.com/film/parasite-2019/'
 
-    data = letterboxd_scraper.load_script_tags(url)
+    language = letterboxd_scraper.get_film_language(url)
 
-    language = letterboxd_scraper.get_film_language(data)
-
-    assert language == 'Korean'
+    assert language == ['Korean']
 
 
 # test letterboxd list functions
