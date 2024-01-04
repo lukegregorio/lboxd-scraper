@@ -64,7 +64,7 @@ def test_get_film_language():
 
     language = letterboxd_scraper.get_film_language(url)
 
-    assert language == ['Korean']
+    assert language == ['Korean', 'English', 'German']
 
 
 # test letterboxd list functions
