@@ -88,7 +88,7 @@ def test_get_films():
 
     films = letterboxd_scraper.get_films(html)
 
-    expected_type = list[str]
+    expected_type = list
 
     assert isinstance(films, expected_type)
 
