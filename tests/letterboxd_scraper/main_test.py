@@ -18,7 +18,7 @@ def test_get_film_director():
 
     directors = letterboxd_scraper.get_film_director(data)
 
-    assert directors == ['Bong Joon Ho']
+    assert directors == ['Bong Joon-Ho']
 
 
 def test_get_film_genre():
