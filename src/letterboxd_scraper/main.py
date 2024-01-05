@@ -3,191 +3,183 @@ import bs4
 import json
 
 
-def load_script_tags(url: str) -> dict:
+class filmList:
     """
-    Load the script tags from the url
-
-    Parameters
-    ----------
-    url : str
-        The url to scrape
-
-    Returns
-    -------
-    dict
-        A dict of script tags
+    A class to represent a list on Letterboxd
     """
-
-    soup = bs4.BeautifulSoup(requests.get(url).text, "html.parser")
-
-    # get the script tag with the json data
-    script_string = soup.find("script", type="application/ld+json").text
-
-    # remove the CDATA tags
-    script_string = (
-        script_string.replace("/* <![CDATA[ */", "").replace("/* ]]> */", "").strip()
-    )
-
-    data = json.loads(script_string)
-
-    return data
+    
+    def __init__(self, url: str):
+        self.url = url
+        self.html = self.get_html()
+        self.films = self.get_films()
 
 
-def get_film_director(data: dict) -> list:
+    def get_html(self) -> str:
+        """
+        Get the HTML from the page of a letterboxd list
+
+        Returns
+        -------
+        str
+            The HTML from the page
+        """
+
+        response = requests.get(self.url)
+        return response.text
+    
+    def get_films(self) -> list[str]:
+        """
+        Get the list of films from the HTML
+
+        Returns
+        -------
+        list
+            A list of films
+        """
+
+        soup = bs4.BeautifulSoup(self.html, "html.parser")
+        return soup.select(".list-number+ a")
+
+
+class User:
     """
-    Get the director(s) of the film
-
-    Parameters
-    ----------
-    data : dict
-        The data from the script tag
-
-    Returns
-    -------
-    list
-        A list of director(s)
+    A class to represent a user on Letterboxd
     """
+    
+    def __init__(self, username: str):
+        self.username = username
+        self.url = f"https://letterboxd.com/{username}/"
+    
+    pass
 
-    directors = []
 
-    for dict in data["director"]:
-        directors.append(dict["name"])
-
-    return directors
-
-
-def get_film_genre(data: dict) -> list:
+class Film:
     """
-    Get the genre(s) of the film
-
-    Parameters
-    ----------
-    data : dict
-        The data from the script tag
-
-    Returns
-    -------
-    list
-        A list of genre(s)
+    A class to represent a film on Letterboxd
     """
+    
+    def __init__(self, url: str):
+        self.url = url
+        self.data = self.load_script_tags()
+        self.director = self.get_film_director()
+        self.genre = self.get_film_genre()
+        self.country = self.get_film_country()
+        self.year = self.get_film_year()
+        self.language = self.get_film_language()
 
-    return data["genre"]
+            
+    def load_script_tags(self) -> dict:
+        """
+        Load the script tags from the user's URL
 
+        Returns
+        -------
+        dict
+            A dict of script tags
+        """
 
-def get_film_country(data: dict) -> list:
-    """
-    Get the country(s) of the film
+        soup = bs4.BeautifulSoup(requests.get(self.url).text, "html.parser")
 
-    Parameters
-    ----------
-    data : dict
-        The data from the script tag
+        # get the script tag with the json data
+        script_string = soup.find("script", type="application/ld+json").text
 
-    Returns
-    -------
-    list
-        A list of country(s)
-    """
+        # remove the CDATA tags
+        script_string = (
+            script_string.replace("/* <![CDATA[ */", "").replace("/* ]]> */", "").strip()
+        )
 
-    countries = []
+        data = json.loads(script_string)
 
-    for dict in data["countryOfOrigin"]:
-        countries.append(dict["name"])
-
-    return countries
-
-
-def get_film_year(data: dict) -> str:
-    """
-    Get the year the film was released
-
-    Parameters
-    ----------
-    data : dict
-        The data from the script tag
-
-    Returns
-    -------
-    str
-        A string of the year
-    """
-
-    for dict in data["releasedEvent"]:
-        if dict["@type"] == "PublicationEvent":
-            return dict["startDate"]
+        return data
 
 
-def get_film_language(url: str) -> list:
-    """
-    Get the language(s) of the film
+    def get_film_director(self) -> list:
+        """
+        Get the director(s) of the film
 
-    Parameters
-    ----------
-    url : str
-        The url to scrape
+        Returns
+        -------
+        list
+            A list of director(s)
+        """
 
-    Returns
-    -------
-    list
-        A list of language(s)
-    """
+        directors = []
 
-    # get the html links to scrape for film info
-    details_url = url + "details"
+        for dict in self.data["director"]:
+            directors.append(dict["name"])
 
-    details_html = requests.get(details_url).text
-
-    # get tags for the details data on the url
-    tags = (
-        bs4.BeautifulSoup(details_html, "html.parser")
-        .find("div", {"id": "tab-details"})
-        .find_all("a", href=True)
-    )
-
-    # get the language
-    language = [a.text for a in tags if a["href"].startswith("/films/language/")]
-
-    return list(set(language))
+        return directors
 
 
-# letterboxd list functions
+    def get_film_genre(self) -> list:
+        """
+        Get the genre(s) of the film
+
+        Returns
+        -------
+        list
+            A list of genre(s)
+        """
+
+        return self.data["genre"]
 
 
-# Get the HTML from the page
-def get_html(url: str) -> str:
-    """
-    Get the HTML from the page of a letterboxd list
+    def get_film_country(self) -> list:
+        """
+        Get the country(s) of the film
 
-    Parameters
-    ----------
-    url : str
-        The url to scrape
+        Returns
+        -------
+        list
+            A list of country(s)
+        """
 
-    Returns
-    -------
-    str
-        The HTML from the page
-    """
+        countries = []
 
-    response = requests.get(url)
-    return response.text
+        for dict in self.data["countryOfOrigin"]:
+            countries.append(dict["name"])
+
+        return countries
 
 
-# Get the list of films from the HTML
-def get_films(html: str) -> list[str]:
-    """
-    Get the list of films from the HTML
+    def get_film_year(self) -> str:
+        """
+        Get the year the film was released
 
-    Parameters
-    ----------
-    html : str
-        The HTML from the page
+        Returns
+        -------
+        str
+            A string of the year
+        """
 
-    Returns
-    -------
-    list
-        A list of films
-    """
+        for dict in self.data["releasedEvent"]:
+            if dict["@type"] == "PublicationEvent":
+                return dict["startDate"]
 
-    soup = bs4.BeautifulSoup(html, "html.parser")
-    return soup.select(".list-number+ a")
+
+    def get_film_language(self) -> list:
+        """
+        Get the language(s) of the film
+
+        Returns
+        -------
+        list
+            A list of language(s)
+        """
+
+        # get the html links to scrape for film info
+        details_url = self.url + "details"
+
+        details_html = requests.get(details_url).text
+
+        # get tags for the details data on the url
+        tags = (
+            bs4.BeautifulSoup(details_html, "html.parser")
+            .find("div", {"id": "tab-details"})
+            .find_all("a", href=True)
+        )
+
+        # get the language
+        language = [a.text for a in tags if a["href"].startswith("/films/language/")]
+
+        return list(set(language))

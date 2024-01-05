@@ -1,4 +1,30 @@
-import letterboxd_scraper.main as letterboxd_scraper
+from letterboxd_scraper.main import filmList, User, Film
+
+# test letterboxd list methods
+
+def test_get_html():
+
+    film_list = filmList('https://letterboxd.com/gregs_pictures/list/lazed-out-summer/')
+
+    html = film_list.get_html(film_list.url)
+
+    assert html is not None
+
+
+def test_get_films():
+
+    url = 'https://letterboxd.com/gregs_pictures/list/lazed-out-summer/'
+
+    html = letterboxd_scraper.get_html(url)
+
+    films = letterboxd_scraper.get_films(html)
+
+    expected_type = list
+
+    assert isinstance(films, expected_type)
+
+
+# test letterboxd film methods
 
 def test_load_script_tags():
 
@@ -67,28 +93,3 @@ def test_get_film_language():
     expected_type = list
 
     assert isinstance(language, expected_type)
-
-
-# test letterboxd list functions
-
-def test_get_html():
-
-    url = 'https://letterboxd.com/gregs_pictures/list/lazed-out-summer/'
-
-    html = letterboxd_scraper.get_html(url)
-
-    assert html is not None
-
-
-def test_get_films():
-
-    url = 'https://letterboxd.com/gregs_pictures/list/lazed-out-summer/'
-
-    html = letterboxd_scraper.get_html(url)
-
-    films = letterboxd_scraper.get_films(html)
-
-    expected_type = list
-
-    assert isinstance(films, expected_type)
-
