@@ -49,6 +49,105 @@ class User:
     def __init__(self, username: str):
         self.username = username
         self.url = f"https://letterboxd.com/{username}/"
+
+
+    def get_films(self) -> list[str]:
+        """
+        Get user watched films
+
+        Returns
+        -------
+        list
+            A list of film urls
+        """
+
+        user_root_films_url = self.url + "films/"
+
+        page_urls = _get_pages_from_user_films(user_root_films_url)
+
+        # get the film urls from each page
+        film_urls = []
+
+        for page_url in page_urls:
+            film_urls += _get_film_from_poster(page_url)
+
+        return film_urls
+
+
+    def get_reviews(self) -> list[str]:
+        pass
+
+    def get_watchlist(self) -> list[str]:
+        pass
+
+    def get_lists(self) -> list[str]:
+        pass
+
+    def get_likes(self) -> list[str]:
+        pass
+
+    def get_followers(self) -> list[str]:
+        pass
+
+    def get_following(self) -> list[str]:
+        pass
+
+    @staticmethod
+    def _get_pages_from_user_films(url: str) -> list[str]:
+        """
+        Get the pages of the user's films
+
+        Parameters
+        ----------
+        url : str
+            The url of the user's films page
+
+        Returns
+        -------
+        list
+            A list of urls for each page of the user's films
+        """
+
+        user_films_html = requests.get(url).text
+
+        soup = bs4.BeautifulSoup(user_films_html, "html.parser")
+
+        page_links = soup.select('.paginate-pages a')
+
+        last_page_number = int(page_links[-1].text)
+
+        page_urls = [url + f'page/{page_number}/' for page_number in range(1, last_page_number)]
+
+        return page_urls
+    
+    @staticmethod
+    def _get_film_from_poster(url: str) -> str:
+        """
+        Get the film url from the poster on a user's films page
+
+        Parameters
+        ----------
+        url : str
+            The url of the user's films page
+
+        Returns
+        -------
+        str
+            The url of the film
+        """
+
+        page_html = requests.get(url).text
+
+        soup = bs4.BeautifulSoup(page_html, "html.parser")
+
+        film_soups = soup.find_all("li", {"class": "poster-container"})
+
+        data_target_links = [div.get('data-target-link') for film in film_soups for div in film.find_all('div', {'data-target-link': True})]
+
+        film_urls = ['https://letterboxd.com/' + partial_url for partial_url in data_target_links] 
+
+        return film_urls
+
     
     pass
 
@@ -61,6 +160,7 @@ class Film:
     def __init__(self, url: str):
         self.url = url
         self.data = self.load_script_tags()
+        self.title = self.data["name"]
         self.director = self.get_film_director()
         self.genre = self.get_film_genre()
         self.country = self.get_film_country()
