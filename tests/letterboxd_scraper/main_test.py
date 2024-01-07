@@ -6,18 +6,16 @@ def test_get_html():
 
     film_list = filmList('https://letterboxd.com/gregs_pictures/list/lazed-out-summer/')
 
-    html = film_list.get_html(film_list.url)
+    html = film_list.get_html()
 
     assert html is not None
 
 
 def test_get_films():
 
-    url = 'https://letterboxd.com/gregs_pictures/list/lazed-out-summer/'
+    film_list = filmList('https://letterboxd.com/gregs_pictures/list/lazed-out-summer/')
 
-    html = letterboxd_scraper.get_html(url)
-
-    films = letterboxd_scraper.get_films(html)
+    films = film_list.get_films()
 
     expected_type = list
 
@@ -28,9 +26,9 @@ def test_get_films():
 
 def test_load_script_tags():
 
-    url = 'https://letterboxd.com/film/parasite-2019/'
+    film = Film('https://letterboxd.com/film/parasite-2019/')
 
-    data = letterboxd_scraper.load_script_tags(url)
+    data = film.load_script_tags()
 
     assert data['name'] == 'Parasite'
     assert data['@type'] == 'Movie'
@@ -38,22 +36,18 @@ def test_load_script_tags():
 
 def test_get_film_director():
 
-    url = 'https://letterboxd.com/film/parasite-2019/'
+    film = Film('https://letterboxd.com/film/parasite-2019/')
 
-    data = letterboxd_scraper.load_script_tags(url)
-
-    directors = letterboxd_scraper.get_film_director(data)
+    directors = film.get_film_director()
 
     assert directors == ['Bong Joon-ho']
 
 
 def test_get_film_genre():
 
-    url = 'https://letterboxd.com/film/parasite-2019/'
+    film = Film('https://letterboxd.com/film/parasite-2019/')
 
-    data = letterboxd_scraper.load_script_tags(url)
-
-    genres = letterboxd_scraper.get_film_genre(data)
+    genres = film.get_film_genre()
 
     expected_type = list
 
@@ -62,11 +56,9 @@ def test_get_film_genre():
 
 def test_get_film_country():
 
-    url = 'https://letterboxd.com/film/parasite-2019/'
+    film = Film('https://letterboxd.com/film/parasite-2019/')
 
-    data = letterboxd_scraper.load_script_tags(url)
-
-    countries = letterboxd_scraper.get_film_country(data)
+    countries = film.get_film_country()
 
     expected_type = list
 
@@ -75,20 +67,18 @@ def test_get_film_country():
 
 def test_get_film_year():
     
-        url = 'https://letterboxd.com/film/parasite-2019/'
+    film = Film('https://letterboxd.com/film/parasite-2019/')
     
-        data = letterboxd_scraper.load_script_tags(url)
+    year = film.get_film_year()
     
-        year = letterboxd_scraper.get_film_year(data)
-        
-        assert year == '2019'
+    assert year == '2019'
 
 
 def test_get_film_language():
 
-    url = 'https://letterboxd.com/film/parasite-2019/'
+    film = Film('https://letterboxd.com/film/parasite-2019/')
 
-    language = letterboxd_scraper.get_film_language(url)
+    language = film.get_film_language()
 
     expected_type = list
 
