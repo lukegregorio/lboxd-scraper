@@ -83,3 +83,55 @@ def test_get_film_language():
     expected_type = list
 
     assert isinstance(language, expected_type)
+
+# test letterboxd user methods
+    
+def test_get_film_from_poster():
+
+    url = 'https://letterboxd.com/gregs_pictures/films/'
+
+    films = _get_film_from_poster(url)
+
+    expected_type = list
+
+    assert isinstance(films, expected_type)
+
+def test_get_reviews_from_page():
+
+    url = 'https://letterboxd.com/gregs_pictures/films/reviews/page/1/'
+
+    reviews = _get_reviews_from_page(url)
+
+    expected_type = list
+
+    assert isinstance(reviews, expected_type)
+
+def test_get_list_from_page():
+
+    url = 'https://letterboxd.com/gregs_pictures/list/'
+
+    films = _get_list_from_page(url)
+
+    expected_type = list
+
+    assert isinstance(films, expected_type)
+
+def test_get_followers_from_page():
+
+    url = 'https://letterboxd.com/gregs_pictures/followers/page/1/'
+
+    followers = _get_followers_from_page(url)
+
+    expected_type = list
+
+    assert isinstance(followers, expected_type)
+
+def test_get_following_from_page():
+    
+    url = 'https://letterboxd.com/gregs_pictures/following/page/1/'
+
+    following = _get_following_from_page(url)
+
+    expected_type = list
+
+    assert isinstance(following, expected_type)

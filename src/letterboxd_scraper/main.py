@@ -99,7 +99,25 @@ class User:
         pass
 
     def get_lists(self) -> list[str]:
-        pass
+        """
+        Get user lists
+
+        Returns
+        -------
+        list
+            A list of lists
+        """
+
+        list_url = self.url + "lists/"
+
+        page_urls = _get_pages(list_url)
+
+        lists = []
+
+        for page_url in page_urls:
+            lists += _get_list_from_page(page_url)
+
+        return lists
 
     def get_followers(self) -> list[str]:
         """
