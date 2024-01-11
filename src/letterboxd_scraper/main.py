@@ -63,7 +63,7 @@ class User:
 
         user_root_films_url = self.url + "films/"
 
-        page_urls = _get_pages_from_user_films(user_root_films_url)
+        page_urls = _get_pages(user_root_films_url)
 
         # get the film urls from each page
         film_urls = []
@@ -75,7 +75,25 @@ class User:
 
 
     def get_reviews(self) -> list[str]:
-        pass
+        """
+        Get user reviews
+
+        Returns
+        -------
+        list
+            A list of reviews
+        """
+
+        review_url = self.url + "films/reviews/"
+
+        page_urls = _get_pages(review_url)
+
+        reviews = []
+
+        for page_url in page_urls:
+            reviews += _get_reviews_from_page(page_url)
+
+        return reviews
 
     def get_watchlist(self) -> list[str]:
         pass
@@ -83,24 +101,57 @@ class User:
     def get_lists(self) -> list[str]:
         pass
 
-    def get_likes(self) -> list[str]:
-        pass
-
     def get_followers(self) -> list[str]:
-        pass
+        """
+        Get user followers
+
+        Returns
+        -------
+        list
+            A list of followers
+        """
+
+        followers_url = self.url + "followers/"
+
+        page_urls = _get_pages(followers_url)
+
+        followers = []
+
+        for page_url in page_urls:
+            followers += _get_followers_from_page(page_url)
+
+        return followers
 
     def get_following(self) -> list[str]:
-        pass
+        """
+        Get user following
+
+        Returns
+        -------
+        list
+            A list of following
+        """
+
+        following_url = self.url + "following/"
+
+        page_urls = _get_pages(following_url)
+
+        following = []
+
+        for page_url in page_urls:
+            following += _get_following_from_page(page_url)
+
+        return following
 
     @staticmethod
-    def _get_pages_from_user_films(url: str) -> list[str]:
+    def _get_pages(url: str) -> list[str]:
         """
-        Get the pages of the user's films
+        Get the pages of a page
 
         Parameters
         ----------
         url : str
-            The url of the user's films page
+            The url of the user's page
 
         Returns
         -------
@@ -147,7 +198,109 @@ class User:
         film_urls = ['https://letterboxd.com/' + partial_url for partial_url in data_target_links] 
 
         return film_urls
+    
+    @staticmethod
+    def _get_reviews_from_page(url: str) -> list[str]:
+        """
+        Get the reviews from a page
 
+        Parameters
+        ----------
+        url : str
+            The url of the user's reviews page
+
+        Returns
+        -------
+        list
+            A list of reviews
+        """
+
+        page_html = requests.get(url).text
+
+        soup = bs4.BeautifulSoup(page_html, "html.parser")
+
+        div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
+
+        reviews = [div.get_text(separator=' ', strip=True) for div in div_list]
+
+        return reviews
+    
+    @staticmethod
+    def _get_list_from_page(url: str) -> list[str]:
+        """
+        Get the lists from a page
+
+        Parameters
+        ----------
+        url : str
+            The url of the user's lists page
+
+        Returns
+        -------
+        list
+            A list of lists
+        """
+
+        page_html = requests.get(url).text
+
+        soup = bs4.BeautifulSoup(page_html, "html.parser")
+
+        a_list = soup.find_all("a", {"class": "list-link"})
+
+        lists = ['https://letterboxd.com' + list_soup.get('href') for list_soup in a_list]
+        
+        return lists
+    
+    @staticmethod
+    def _get_followers_from_page(url: str) -> list[str]:
+        """
+        Get the followers from a page
+
+        Parameters
+        ----------
+        url : str
+            The url of the user's followers page
+
+        Returns
+        -------
+        list
+            A list of followers
+        """
+
+        user_followers_html = requests.get(url).text
+
+        soup = bs4.BeautifulSoup(user_followers_html, "html.parser")
+
+        div_list = soup.find_all("div", {"class": "person-summary"})
+
+        followers = ['https://letterboxd.com' + div.find("a", {"class": "name"}).get('href') for div in div_list]
+
+        return followers
+    
+    @staticmethod
+    def _get_following_from_page(url: str) -> list[str]:
+        """
+        Get the following from a page
+        
+        Parameters
+        ----------
+        url : str
+            The url of the user's following page
+            
+        Returns
+        -------
+        list
+            A list of following
+        """
+        user_following_html = requests.get(url).text
+
+        soup = bs4.BeautifulSoup(user_following_html, "html.parser")
+
+        div_list = soup.find_all("div", {"class": "person-summary"})
+
+        following = ['https://letterboxd.com' + div.find("a", {"class": "name"}).get('href') for div in div_list]
+
+        return following
     
     pass
 
