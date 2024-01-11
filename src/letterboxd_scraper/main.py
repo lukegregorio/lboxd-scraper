@@ -63,13 +63,13 @@ class User:
 
         user_root_films_url = self.url + "films/"
 
-        page_urls = _get_pages(user_root_films_url)
+        page_urls = User._get_pages(user_root_films_url)
 
         # get the film urls from each page
         film_urls = []
 
         for page_url in page_urls:
-            film_urls += _get_film_from_poster(page_url)
+            film_urls += User._get_film_from_poster(page_url)
 
         return film_urls
 
@@ -86,12 +86,12 @@ class User:
 
         review_url = self.url + "films/reviews/"
 
-        page_urls = _get_pages(review_url)
+        page_urls = User._get_pages(review_url)
 
         reviews = []
 
         for page_url in page_urls:
-            reviews += _get_reviews_from_page(page_url)
+            reviews += User._get_reviews_from_page(page_url)
 
         return reviews
 
@@ -110,12 +110,12 @@ class User:
 
         list_url = self.url + "lists/"
 
-        page_urls = _get_pages(list_url)
+        page_urls = User._get_pages(list_url)
 
         lists = []
 
         for page_url in page_urls:
-            lists += _get_list_from_page(page_url)
+            lists += User._get_list_from_page(page_url)
 
         return lists
 
@@ -131,12 +131,12 @@ class User:
 
         followers_url = self.url + "followers/"
 
-        page_urls = _get_pages(followers_url)
+        page_urls = User._get_pages(followers_url)
 
         followers = []
 
         for page_url in page_urls:
-            followers += _get_followers_from_page(page_url)
+            followers += User._get_followers_from_page(page_url)
 
         return followers
 
@@ -152,12 +152,12 @@ class User:
 
         following_url = self.url + "following/"
 
-        page_urls = _get_pages(following_url)
+        page_urls = User._get_pages(following_url)
 
         following = []
 
         for page_url in page_urls:
-            following += _get_following_from_page(page_url)
+            following += User._get_following_from_page(page_url)
 
         return following
 
