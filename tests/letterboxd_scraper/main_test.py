@@ -1,15 +1,6 @@
-from letterboxd_scraper.main import filmList, User, Film
+from letterboxd_scraper.main import Film, User, filmList
 
 # test letterboxd list methods
-
-def test_get_html():
-
-    film_list = filmList('https://letterboxd.com/gregs_pictures/list/lazed-out-summer/')
-
-    html = film_list.get_html()
-
-    assert html is not None
-
 
 def test_get_films():
 
@@ -152,11 +143,11 @@ def test_get_pages():
 
 def test_find_next_page():
         
-        url = 'https://letterboxd.com/gregs_pictures/following/'
+        url = 'https://letterboxd.com/myles154/following/'
     
         next_page = User._find_next_page(url)
     
-        assert next_page == 'https://letterboxd.com/gregs_pictures/following/page/2/'
+        assert next_page == 'https://letterboxd.com/myles154/following/page/2/'
     
 def test_get_film_from_poster():
 

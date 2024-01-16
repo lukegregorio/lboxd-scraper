@@ -1,7 +1,5 @@
-import requests
-import bs4
 import json
-from utils import get_soup
+from .utils import get_soup
 
 
 class filmList:
