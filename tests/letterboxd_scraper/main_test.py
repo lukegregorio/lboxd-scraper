@@ -126,7 +126,6 @@ def test_get_followers():
 
     assert isinstance(followers, expected_type)
 
-
 def test_get_following():
 
     user = User('gregs_pictures')
@@ -138,6 +137,26 @@ def test_get_following():
     assert isinstance(following, expected_type)
 
 # test letterboxd user helper static methods
+    
+def test_get_pages():
+    
+        url = 'https://letterboxd.com/gregs_pictures/films/'
+    
+        pages = User._get_pages(url)
+    
+        expected_type = list
+    
+        assert isinstance(pages, expected_type)
+        assert len(pages) > 0
+        assert pages[1] == 'https://letterboxd.com/gregs_pictures/films/page/2/'
+
+def test_find_next_page():
+        
+        url = 'https://letterboxd.com/gregs_pictures/following/'
+    
+        next_page = User._find_next_page(url)
+    
+        assert next_page == 'https://letterboxd.com/gregs_pictures/following/page/2/'
     
 def test_get_film_from_poster():
 
