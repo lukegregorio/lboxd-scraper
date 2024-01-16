@@ -86,6 +86,59 @@ def test_get_film_language():
 
 # test letterboxd user methods
     
+def test_get_films():
+
+    user = User('gregs_pictures')
+
+    films = user.get_films()
+
+    expected_type = list
+
+    assert isinstance(films, expected_type)
+
+def test_get_reviews():
+    
+    user = User('gregs_pictures')
+
+    reviews = user.get_reviews()
+
+    expected_type = list
+
+    assert isinstance(reviews, expected_type)
+
+def test_get_lists():
+
+    user = User('gregs_pictures')
+
+    lists = user.get_lists()
+
+    expected_type = list
+
+    assert isinstance(lists, expected_type)
+
+def test_get_followers():
+
+    user = User('gregs_pictures')
+
+    followers = user.get_followers()
+
+    expected_type = list
+
+    assert isinstance(followers, expected_type)
+
+
+def test_get_following():
+
+    user = User('gregs_pictures')
+
+    following = user.get_following()
+
+    expected_type = list
+
+    assert isinstance(following, expected_type)
+
+# test letterboxd user helper static methods
+    
 def test_get_film_from_poster():
 
     url = 'https://letterboxd.com/gregs_pictures/films/'

@@ -1,6 +1,7 @@
 import requests
 import bs4
 import json
+from utils import get_soup
 
 
 class filmList:
@@ -10,22 +11,8 @@ class filmList:
     
     def __init__(self, url: str):
         self.url = url
-        self.html = self.get_html()
         self.films = self.get_films()
 
-
-    def get_html(self) -> str:
-        """
-        Get the HTML from the page of a letterboxd list
-
-        Returns
-        -------
-        str
-            The HTML from the page
-        """
-
-        response = requests.get(self.url)
-        return response.text
     
     def get_films(self) -> list[str]:
         """
@@ -36,8 +23,7 @@ class filmList:
         list
             A list of films
         """
-
-        soup = bs4.BeautifulSoup(self.html, "html.parser")
+        soup = get_soup(self.url)
         return soup.select(".list-number+ a")
 
 
@@ -131,12 +117,11 @@ class User:
 
         followers_url = self.url + "followers/"
 
-        page_urls = User._get_pages(followers_url)
-
         followers = []
 
-        for page_url in page_urls:
-            followers += User._get_followers_from_page(page_url)
+        while followers_url != None:
+            followers += User._get_followers_from_page(followers_url)
+            followers_url = User._find_next_page(followers_url)
 
         return followers
 
@@ -152,19 +137,18 @@ class User:
 
         following_url = self.url + "following/"
 
-        page_urls = User._get_pages(following_url)
-
         following = []
 
-        for page_url in page_urls:
-            following += User._get_following_from_page(page_url)
+        while following_url != None:
+            following += User._get_following_from_page(following_url)
+            following_url = User._find_next_page(following_url)
 
         return following
 
     @staticmethod
     def _get_pages(url: str) -> list[str]:
         """
-        Get the pages of a page
+        Get the pages of a page for pages with numbers at the bottom of the page. Works for user's films, reviews, lists.
 
         Parameters
         ----------
@@ -174,20 +158,45 @@ class User:
         Returns
         -------
         list
-            A list of urls for each page of the user's films
+            A list of urls for each page to scrape
         """
 
-        user_films_html = requests.get(url).text
-
-        soup = bs4.BeautifulSoup(user_films_html, "html.parser")
+        soup = get_soup(url)
 
         page_links = soup.select('.paginate-pages a')
 
-        last_page_number = int(page_links[-1].text)
+        if len(page_links) == 0:
+        # if there is only one page
+            return [url]
+        else:
+            last_page_number = int(page_links[-1].text)
+            page_urls = [url + f'page/{page_number}/' for page_number in range(1, last_page_number)]
+            return page_urls
+    
+    @staticmethod
+    def _find_next_page(url: str) -> str or None:
+        """
+        Check if there is a next page. Works for user's followers and following.
 
-        page_urls = [url + f'page/{page_number}/' for page_number in range(1, last_page_number)]
+        Parameters
+        ----------
+        url : str
+            The url of the user's page
 
-        return page_urls
+        Returns
+        -------
+        str or None
+            The url of the next page or None if there is no next page
+        """
+
+        soup = get_soup(url)
+
+        next_page = soup.find("a", {"class": "next"})
+
+        if next_page != None:
+            return "https://letterboxd.com" + next_page.get("href")
+        else:
+            return None
     
     @staticmethod
     def _get_film_from_poster(url: str) -> str:
@@ -205,9 +214,7 @@ class User:
             The url of the film
         """
 
-        page_html = requests.get(url).text
-
-        soup = bs4.BeautifulSoup(page_html, "html.parser")
+        soup = get_soup(url)
 
         film_soups = soup.find_all("li", {"class": "poster-container"})
 
@@ -233,9 +240,7 @@ class User:
             A list of reviews
         """
 
-        page_html = requests.get(url).text
-
-        soup = bs4.BeautifulSoup(page_html, "html.parser")
+        soup = get_soup(url)
 
         div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
 
@@ -259,9 +264,7 @@ class User:
             A list of lists
         """
 
-        page_html = requests.get(url).text
-
-        soup = bs4.BeautifulSoup(page_html, "html.parser")
+        soup = get_soup(url)
 
         a_list = soup.find_all("a", {"class": "list-link"})
 
@@ -285,9 +288,7 @@ class User:
             A list of followers
         """
 
-        user_followers_html = requests.get(url).text
-
-        soup = bs4.BeautifulSoup(user_followers_html, "html.parser")
+        soup = get_soup(url)
 
         div_list = soup.find_all("div", {"class": "person-summary"})
 
@@ -310,9 +311,7 @@ class User:
         list
             A list of following
         """
-        user_following_html = requests.get(url).text
-
-        soup = bs4.BeautifulSoup(user_following_html, "html.parser")
+        soup = get_soup(url)
 
         div_list = soup.find_all("div", {"class": "person-summary"})
 
@@ -349,7 +348,7 @@ class Film:
             A dict of script tags
         """
 
-        soup = bs4.BeautifulSoup(requests.get(self.url).text, "html.parser")
+        soup = get_soup(self.url)
 
         # get the script tag with the json data
         script_string = soup.find("script", type="application/ld+json").text
@@ -441,16 +440,18 @@ class Film:
         # get the html links to scrape for film info
         details_url = self.url + "details"
 
-        details_html = requests.get(details_url).text
+        soup = get_soup(details_url)
 
         # get tags for the details data on the url
-        tags = (
-            bs4.BeautifulSoup(details_html, "html.parser")
-            .find("div", {"id": "tab-details"})
-            .find_all("a", href=True)
-        )
+        tags = soup.find("div", {"id": "tab-details"}).find_all("a", href=True)
 
         # get the language
         language = [a.text for a in tags if a["href"].startswith("/films/language/")]
 
         return list(set(language))
+    
+
+if __name__ == "__main__":
+    user = User("gregs_pictures")
+
+    user.get_reviews()
