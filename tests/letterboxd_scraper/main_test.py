@@ -83,7 +83,7 @@ def test_get_films():
 
     films = user.get_films()
 
-    expected_type = list
+    expected_type = dict
 
     assert isinstance(films, expected_type)
 
@@ -155,7 +155,7 @@ def test_get_film_from_poster():
 
     films = User._get_film_from_poster(url)
 
-    expected_type = list
+    expected_type = dict
 
     assert isinstance(films, expected_type)
 
