@@ -1,5 +1,5 @@
 import json
-from .utils import get_soup
+from src.lboxd_scraper.utils import get_soup
 from typing import Union
 
 
