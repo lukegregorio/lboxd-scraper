@@ -1,4 +1,4 @@
-from letterboxd_scraper.main import Film, User, filmList
+from lboxd_scraper.main import Film, User, filmList
 
 
 # test letterboxd user methods
