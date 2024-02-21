@@ -19,3 +19,8 @@ classifiers = [
 
 [project.urls]
 Repository = "https://github.com/lukegregorio/lboxd-scraper"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
