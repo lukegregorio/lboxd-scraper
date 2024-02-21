@@ -3,29 +3,6 @@ from .utils import get_soup
 from typing import Union
 
 
-class filmList:
-    """
-    A class to represent a list on Letterboxd
-    """
-    
-    def __init__(self, url: str):
-        self.url = url
-        self.films = self.get_films()
-
-    
-    def get_films(self) -> list[str]:
-        """
-        Get the list of films from the HTML
-
-        Returns
-        -------
-        list
-            A list of films
-        """
-        soup = get_soup(self.url)
-        return soup.select(".list-number+ a")
-
-
 class User:
     """
     A class to represent a user on Letterboxd
@@ -339,6 +316,7 @@ class User:
         return following
     
 
+
 class Film:
     """
     A class to represent a film on Letterboxd
@@ -534,7 +512,32 @@ class Film:
         reviews = [div.get_text(separator=' ', strip=True) for div in div_list]
 
         return reviews
+
+
+
+class filmList:
+    """
+    A class to represent a list on Letterboxd
+    """
     
+    def __init__(self, url: str):
+        self.url = url
+        self.films = self.get_films()
+
+    
+    def get_films(self) -> list[str]:
+        """
+        Get the list of films from the HTML
+
+        Returns
+        -------
+        list
+            A list of films
+        """
+        soup = get_soup(self.url)
+        return soup.select(".list-number+ a") 
+
+
 
 if __name__ == "__main__":
     user = User("gregs_pictures")
