@@ -33,16 +33,21 @@ class User:
     def __init__(self, username: str):
         self.username = username
         self.url = f"https://letterboxd.com/{username}/"
+        self.films = self.get_films()
+        self.reviews = self.get_reviews()
+        self.lists = self.get_lists()
+        self.followers = self.get_followers()
+        self.following = self.get_following()
 
 
     def get_films(self) -> list[str]:
         """
-        Get user watched films
+        Get user watched films - iterate over letterboxd pages
 
         Returns
         -------
-        list
-            A list of film urls
+        dict
+            returns a dict with info by each film url - includes user rating
         """
 
         user_root_films_url = self.url + "films/"
@@ -50,12 +55,12 @@ class User:
         page_urls = User._get_pages(user_root_films_url)
 
         # get the film urls from each page
-        film_urls = []
+        film_data = []
 
         for page_url in page_urls:
-            film_urls += User._get_film_from_poster(page_url)
+            film_data += User._get_film_from_poster(page_url)
 
-        return film_urls
+        return film_data
 
 
     def get_reviews(self) -> list[str]:
@@ -78,9 +83,6 @@ class User:
             reviews += User._get_reviews_from_page(page_url)
 
         return reviews
-
-    def get_watchlist(self) -> list[str]:
-        pass
 
     def get_lists(self) -> list[str]:
         """
@@ -199,7 +201,7 @@ class User:
     @staticmethod
     def _get_film_from_poster(url: str) -> str:
         """
-        Get the film url from the poster on a user's films page
+        Get the film url and user rating from the poster on a user's films page
 
         Parameters
         ----------
@@ -208,19 +210,36 @@ class User:
 
         Returns
         -------
-        str
-            The url of the film
+        film_data : dict
         """
 
         soup = get_soup(url)
 
         film_soups = soup.find_all("li", {"class": "poster-container"})
 
-        data_target_links = [div.get('data-target-link') for film in film_soups for div in film.find_all('div', {'data-target-link': True})]
+        # store film url and rating
+        film_data = {}
 
-        film_urls = ['https://letterboxd.com/' + partial_url for partial_url in data_target_links] 
+        for film in film_soups:
+            # get url of film
+            div = film.find('div', class_='linked-film-poster')
+            film_url = 'https://letterboxd.com' + div.get('data-target-link')
+            
+            # get rating of film
+            rating_span = film.find('span', class_='rating')
+            # check if rating is available
+            if rating_span:
+                # get rating
+                class_attribute = rating_span['class']
+                for attribute in class_attribute:
+                    if 'rated-' in attribute:
+                        film_rating = int(attribute.split('rated-')[-1])
+            else:
+                film_rating = None
 
-        return film_urls
+            film_data[film_url] = {'rating': film_rating}
+        
+        return film_data
     
     @staticmethod
     def _get_reviews_from_page(url: str) -> list[str]:
@@ -317,8 +336,6 @@ class User:
 
         return following
     
-    pass
-
 
 class Film:
     """
