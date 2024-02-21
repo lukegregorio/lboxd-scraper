@@ -1,5 +1,6 @@
 import json
 from .utils import get_soup
+from typing import Union
 
 
 class filmList:
@@ -175,7 +176,7 @@ class User:
             return page_urls
     
     @staticmethod
-    def _find_next_page(url: str) -> str or None:
+    def _find_next_page(url: str) -> Union[str, None]:
         """
         Check if there is a next page. Works for user's followers and following.
 
