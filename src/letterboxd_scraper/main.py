@@ -55,10 +55,11 @@ class User:
         page_urls = User._get_pages(user_root_films_url)
 
         # get the film urls from each page
-        film_data = []
+        film_data = {}
 
         for page_url in page_urls:
-            film_data += User._get_film_from_poster(page_url)
+            page_film_data = User._get_film_from_poster(page_url)
+            film_data.update(page_film_data)
 
         return film_data
 
