@@ -235,7 +235,7 @@ class User:
                 class_attribute = rating_span['class']
                 for attribute in class_attribute:
                     if 'rated-' in attribute:
-                        film_rating = int(attribute.split('rated-')[-1])
+                        film_rating = int(attribute.split('rated-')[-1]) / 2 # convert to 5 star scale from 10 star scale
             else:
                 film_rating = None
 
@@ -353,6 +353,10 @@ class Film:
         self.country = self.get_film_country()
         self.year = self.get_film_year()
         self.language = self.get_film_language()
+        self.average_rating = self.get_film_average_rating()
+        self.rating_count = self.get_film_rating_count()
+        self.description = self.get_film_description()
+        self.reviews = self.get_top_film_reviews()
 
             
     def load_script_tags(self) -> dict:
@@ -466,6 +470,70 @@ class Film:
         language = [a.text for a in tags if a["href"].startswith("/films/language/")]
 
         return list(set(language))
+    
+    
+    def get_film_average_rating(self) -> float:
+        """
+        Get the average rating of the film
+
+        Returns
+        -------
+        float
+            The average rating of the film
+        """
+
+        return self.data["aggregateRating"]["ratingValue"]
+    
+
+    def get_film_rating_count(self) -> int:
+        """
+        Get the number of ratings of the film
+
+        Returns
+        -------
+        int
+            The number of ratings of the film
+        """
+
+        return self.data["aggregateRating"]["ratingCount"]
+    
+
+    def get_film_description(self) -> str:
+        """
+        Get the summary of the film
+
+        Returns
+        -------
+        str
+            The description of the film
+        """
+
+        soup = get_soup(self.url)
+
+        description = soup.select_one('div.truncate > p').text
+
+        return description
+    
+
+    def get_top_film_reviews(self) -> list:
+        """
+        Get the top reviews of the film
+
+        Returns
+        -------
+        list
+            A list of top reviews from the first page of most popular reviews
+        """
+
+        reviews_url = self.url + "reviews/by/activity/"
+
+        soup = get_soup(reviews_url)
+
+        div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
+
+        reviews = [div.get_text(separator=' ', strip=True) for div in div_list]
+
+        return reviews
     
 
 if __name__ == "__main__":

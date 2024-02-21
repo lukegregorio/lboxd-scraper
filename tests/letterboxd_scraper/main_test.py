@@ -75,6 +75,36 @@ def test_get_film_language():
 
     assert isinstance(language, expected_type)
 
+
+def test_get_film_average_rating():
+    
+    film = Film('https://letterboxd.com/film/parasite-2019/')
+
+    rating = film.get_film_average_rating()
+
+    assert 0 < rating <= 5
+
+
+def test_get_film_rating_count():
+    
+    film = Film('https://letterboxd.com/film/parasite-2019/')
+
+    rating_count = film.get_film_rating_count()
+
+    assert rating_count > 0
+
+
+def test_get_film_reviews():
+
+    film = Film('https://letterboxd.com/film/parasite-2019/')
+
+    reviews = film.get_film_reviews()
+
+    expected_type = list
+
+    assert isinstance(reviews, expected_type)
+
+
 # test letterboxd user methods
     
 def test_get_films():
@@ -87,6 +117,7 @@ def test_get_films():
 
     assert isinstance(films, expected_type)
 
+
 def test_get_reviews():
     
     user = User('gregs_pictures')
@@ -96,6 +127,7 @@ def test_get_reviews():
     expected_type = list
 
     assert isinstance(reviews, expected_type)
+
 
 def test_get_lists():
 
@@ -107,6 +139,7 @@ def test_get_lists():
 
     assert isinstance(lists, expected_type)
 
+
 def test_get_followers():
 
     user = User('gregs_pictures')
@@ -117,6 +150,7 @@ def test_get_followers():
 
     assert isinstance(followers, expected_type)
 
+
 def test_get_following():
 
     user = User('gregs_pictures')
@@ -126,6 +160,7 @@ def test_get_following():
     expected_type = list
 
     assert isinstance(following, expected_type)
+
 
 # test letterboxd user helper static methods
     
@@ -141,6 +176,7 @@ def test_get_pages():
         assert len(pages) > 0
         assert pages[1] == 'https://letterboxd.com/gregs_pictures/films/page/2/'
 
+
 def test_find_next_page():
         
         url = 'https://letterboxd.com/myles154/following/'
@@ -148,6 +184,7 @@ def test_find_next_page():
         next_page = User._find_next_page(url)
     
         assert next_page == 'https://letterboxd.com/myles154/following/page/2/'
+
     
 def test_get_film_from_poster():
 
@@ -159,6 +196,7 @@ def test_get_film_from_poster():
 
     assert isinstance(films, expected_type)
 
+
 def test_get_reviews_from_page():
 
     url = 'https://letterboxd.com/gregs_pictures/films/reviews/page/1/'
@@ -168,6 +206,7 @@ def test_get_reviews_from_page():
     expected_type = list
 
     assert isinstance(reviews, expected_type)
+
 
 def test_get_list_from_page():
 
@@ -179,6 +218,7 @@ def test_get_list_from_page():
 
     assert isinstance(films, expected_type)
 
+
 def test_get_followers_from_page():
 
     url = 'https://letterboxd.com/gregs_pictures/followers/page/1/'
@@ -188,6 +228,7 @@ def test_get_followers_from_page():
     expected_type = list
 
     assert isinstance(followers, expected_type)
+    
 
 def test_get_following_from_page():
     
