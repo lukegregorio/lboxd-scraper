@@ -1,9 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-src/__init__.py
-src/letterboxd_scraper/main.py
-src/letterboxd_scraper_luke_gregorio.egg-info/PKG-INFO
-src/letterboxd_scraper_luke_gregorio.egg-info/SOURCES.txt
-src/letterboxd_scraper_luke_gregorio.egg-info/dependency_links.txt
-src/letterboxd_scraper_luke_gregorio.egg-info/top_level.txt

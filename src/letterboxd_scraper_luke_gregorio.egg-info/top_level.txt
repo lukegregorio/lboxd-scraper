@@ -1,2 +1,0 @@
-__init__
-letterboxd_scraper
