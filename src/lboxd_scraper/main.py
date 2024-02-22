@@ -1,5 +1,5 @@
 import json
-from src.lboxd_scraper.utils import get_soup
+from lboxd_scraper.utils import get_soup
 from typing import Union
 
 
@@ -7,7 +7,7 @@ class User:
     """
     A class to represent a user on Letterboxd
     """
-    
+
     def __init__(self, username: str):
         self.username = username
         self.url = f"https://letterboxd.com/{username}/"
@@ -16,7 +16,6 @@ class User:
         self.lists = self.get_lists()
         self.followers = self.get_followers()
         self.following = self.get_following()
-
 
     def get_films(self) -> list[str]:
         """
@@ -40,7 +39,6 @@ class User:
             film_data.update(page_film_data)
 
         return film_data
-
 
     def get_reviews(self) -> list[str]:
         """
@@ -142,16 +140,19 @@ class User:
 
         soup = get_soup(url)
 
-        page_links = soup.select('.paginate-pages a')
+        page_links = soup.select(".paginate-pages a")
 
         if len(page_links) == 0:
-        # if there is only one page
+            # if there is only one page
             return [url]
         else:
             last_page_number = int(page_links[-1].text)
-            page_urls = [url + f'page/{page_number}/' for page_number in range(1, last_page_number)]
+            page_urls = [
+                url + f"page/{page_number}/"
+                for page_number in range(1, last_page_number)
+            ]
             return page_urls
-    
+
     @staticmethod
     def _find_next_page(url: str) -> Union[str, None]:
         """
@@ -176,7 +177,7 @@ class User:
             return "https://letterboxd.com" + next_page.get("href")
         else:
             return None
-    
+
     @staticmethod
     def _get_film_from_poster(url: str) -> str:
         """
@@ -201,25 +202,27 @@ class User:
 
         for film in film_soups:
             # get url of film
-            div = film.find('div', class_='linked-film-poster')
-            film_url = 'https://letterboxd.com' + div.get('data-target-link')
-            
+            div = film.find("div", class_="linked-film-poster")
+            film_url = "https://letterboxd.com" + div.get("data-target-link")
+
             # get rating of film
-            rating_span = film.find('span', class_='rating')
+            rating_span = film.find("span", class_="rating")
             # check if rating is available
             if rating_span:
                 # get rating
-                class_attribute = rating_span['class']
+                class_attribute = rating_span["class"]
                 for attribute in class_attribute:
-                    if 'rated-' in attribute:
-                        film_rating = int(attribute.split('rated-')[-1]) / 2 # convert to 5 star scale from 10 star scale
+                    if "rated-" in attribute:
+                        film_rating = (
+                            int(attribute.split("rated-")[-1]) / 2
+                        )  # convert to 5 star scale from 10 star scale
             else:
                 film_rating = None
 
-            film_data[film_url] = {'rating': film_rating}
-        
+            film_data[film_url] = {"rating": film_rating}
+
         return film_data
-    
+
     @staticmethod
     def _get_reviews_from_page(url: str) -> list[str]:
         """
@@ -240,10 +243,10 @@ class User:
 
         div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
 
-        reviews = [div.get_text(separator=' ', strip=True) for div in div_list]
+        reviews = [div.get_text(separator=" ", strip=True) for div in div_list]
 
         return reviews
-    
+
     @staticmethod
     def _get_list_from_page(url: str) -> list[str]:
         """
@@ -264,10 +267,12 @@ class User:
 
         a_list = soup.find_all("a", {"class": "list-link"})
 
-        lists = ['https://letterboxd.com' + list_soup.get('href') for list_soup in a_list]
-        
+        lists = [
+            "https://letterboxd.com" + list_soup.get("href") for list_soup in a_list
+        ]
+
         return lists
-    
+
     @staticmethod
     def _get_followers_from_page(url: str) -> list[str]:
         """
@@ -288,20 +293,23 @@ class User:
 
         div_list = soup.find_all("div", {"class": "person-summary"})
 
-        followers = ['https://letterboxd.com' + div.find("a", {"class": "name"}).get('href') for div in div_list]
+        followers = [
+            "https://letterboxd.com" + div.find("a", {"class": "name"}).get("href")
+            for div in div_list
+        ]
 
         return followers
-    
+
     @staticmethod
     def _get_following_from_page(url: str) -> list[str]:
         """
         Get the following from a page
-        
+
         Parameters
         ----------
         url : str
             The url of the user's following page
-            
+
         Returns
         -------
         list
@@ -311,17 +319,19 @@ class User:
 
         div_list = soup.find_all("div", {"class": "person-summary"})
 
-        following = ['https://letterboxd.com' + div.find("a", {"class": "name"}).get('href') for div in div_list]
+        following = [
+            "https://letterboxd.com" + div.find("a", {"class": "name"}).get("href")
+            for div in div_list
+        ]
 
         return following
-    
 
 
 class Film:
     """
     A class to represent a film on Letterboxd
     """
-    
+
     def __init__(self, url: str):
         self.url = url
         self.data = self.load_script_tags()
@@ -336,7 +346,6 @@ class Film:
         self.description = self.get_film_description()
         self.reviews = self.get_top_film_reviews()
 
-            
     def load_script_tags(self) -> dict:
         """
         Load the script tags from the user's URL
@@ -354,13 +363,14 @@ class Film:
 
         # remove the CDATA tags
         script_string = (
-            script_string.replace("/* <![CDATA[ */", "").replace("/* ]]> */", "").strip()
+            script_string.replace("/* <![CDATA[ */", "")
+            .replace("/* ]]> */", "")
+            .strip()
         )
 
         data = json.loads(script_string)
 
         return data
-
 
     def get_film_director(self) -> list:
         """
@@ -379,7 +389,6 @@ class Film:
 
         return directors
 
-
     def get_film_genre(self) -> list:
         """
         Get the genre(s) of the film
@@ -391,7 +400,6 @@ class Film:
         """
 
         return self.data["genre"]
-
 
     def get_film_country(self) -> list:
         """
@@ -410,7 +418,6 @@ class Film:
 
         return countries
 
-
     def get_film_year(self) -> str:
         """
         Get the year the film was released
@@ -424,7 +431,6 @@ class Film:
         for dict in self.data["releasedEvent"]:
             if dict["@type"] == "PublicationEvent":
                 return dict["startDate"]
-
 
     def get_film_language(self) -> list:
         """
@@ -448,8 +454,7 @@ class Film:
         language = [a.text for a in tags if a["href"].startswith("/films/language/")]
 
         return list(set(language))
-    
-    
+
     def get_film_average_rating(self) -> float:
         """
         Get the average rating of the film
@@ -461,7 +466,6 @@ class Film:
         """
 
         return self.data["aggregateRating"]["ratingValue"]
-    
 
     def get_film_rating_count(self) -> int:
         """
@@ -474,7 +478,6 @@ class Film:
         """
 
         return self.data["aggregateRating"]["ratingCount"]
-    
 
     def get_film_description(self) -> str:
         """
@@ -488,10 +491,9 @@ class Film:
 
         soup = get_soup(self.url)
 
-        description = soup.select_one('div.truncate > p').text
+        description = soup.select_one("div.truncate > p").text
 
         return description
-    
 
     def get_top_film_reviews(self) -> list:
         """
@@ -509,22 +511,20 @@ class Film:
 
         div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
 
-        reviews = [div.get_text(separator=' ', strip=True) for div in div_list]
+        reviews = [div.get_text(separator=" ", strip=True) for div in div_list]
 
         return reviews
-
 
 
 class filmList:
     """
     A class to represent a list on Letterboxd
     """
-    
+
     def __init__(self, url: str):
         self.url = url
         self.films = self.get_films()
 
-    
     def get_films(self) -> list[str]:
         """
         Get the list of films from the HTML
@@ -535,8 +535,7 @@ class filmList:
             A list of films
         """
         soup = get_soup(self.url)
-        return soup.select(".list-number+ a") 
-
+        return soup.select(".list-number+ a")
 
 
 if __name__ == "__main__":
