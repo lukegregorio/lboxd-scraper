@@ -1,5 +1,7 @@
+import requests
+from bs4 import BeautifulSoup
 import json
-from lboxd_scraper.utils import get_soup
+
 from typing import Union
 
 
@@ -138,7 +140,8 @@ class User:
             A list of urls for each page to scrape
         """
 
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         page_links = soup.select(".paginate-pages a")
 
@@ -169,7 +172,8 @@ class User:
             The url of the next page or None if there is no next page
         """
 
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         next_page = soup.find("a", {"class": "next"})
 
@@ -193,7 +197,8 @@ class User:
         film_data : dict
         """
 
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         film_soups = soup.find_all("li", {"class": "poster-container"})
 
@@ -239,7 +244,8 @@ class User:
             A list of reviews
         """
 
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
 
@@ -263,7 +269,8 @@ class User:
             A list of lists
         """
 
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         a_list = soup.find_all("a", {"class": "list-link"})
 
@@ -289,7 +296,8 @@ class User:
             A list of followers
         """
 
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         div_list = soup.find_all("div", {"class": "person-summary"})
 
@@ -315,7 +323,8 @@ class User:
         list
             A list of following
         """
-        soup = get_soup(url)
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         div_list = soup.find_all("div", {"class": "person-summary"})
 
@@ -356,8 +365,8 @@ class Film:
             A dict of script tags
         """
 
-        soup = get_soup(self.url)
-
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
         # get the script tag with the json data
         script_string = soup.find("script", type="application/ld+json").text
 
@@ -445,7 +454,8 @@ class Film:
         # get the html links to scrape for film info
         details_url = self.url + "details"
 
-        soup = get_soup(details_url)
+        response = requests.get(details_url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         # get tags for the details data on the url
         tags = soup.find("div", {"id": "tab-details"}).find_all("a", href=True)
@@ -489,7 +499,8 @@ class Film:
             The description of the film
         """
 
-        soup = get_soup(self.url)
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         description = soup.select_one("div.truncate > p").text
 
@@ -507,7 +518,8 @@ class Film:
 
         reviews_url = self.url + "reviews/by/activity/"
 
-        soup = get_soup(reviews_url)
+        response = requests.get(reviews_url)
+        soup = BeautifulSoup(response.content, "html.parser")
 
         div_list = soup.find_all("div", {"class": "body-text -prose collapsible-text"})
 
@@ -534,11 +546,6 @@ class filmList:
         list
             A list of films
         """
-        soup = get_soup(self.url)
+        response = requests.get(self.url)
+        soup = BeautifulSoup(response.content, "html.parser")
         return soup.select(".list-number+ a")
-
-
-if __name__ == "__main__":
-    user = User("gregs_pictures")
-
-    user.get_reviews()

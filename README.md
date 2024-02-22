@@ -11,7 +11,7 @@ pip install lboxd-scraper
 ## Usage
 
 ```python
-import lboxd_scraper 
-film = lboxd_scraper.Film("letterboxd.com/movie/parasite-2019/")
+from lboxd_scraper import lboxd
+film = lboxd.Film("letterboxd.com/movie/parasite-2019/")
 print(film.director)
 ``````
