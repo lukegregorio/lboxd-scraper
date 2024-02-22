@@ -7,7 +7,7 @@ packages = ["src/lboxd_scraper"]
 
 [project]
 name = "lboxd_scraper"
-version = "0.0.4"
+version = "0.0.7"
 authors = [
   { name="Luke Gregorio", email="author@example.com" },
 ]
@@ -20,6 +20,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+  "beautifulsoup4",
+]
+
 [project.urls]
 Repository = "https://github.com/lukegregorio/lboxd-scraper"
 
@@ -27,7 +31,3 @@ Repository = "https://github.com/lukegregorio/lboxd-scraper"
 pythonpath = [
   "."
 ]
-
-[tool.poetry.dependencies]
-python = "^3.8"
-bs4 = "^0.0.1"
