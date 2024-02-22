@@ -7,7 +7,7 @@ packages = ["src/lboxd_scraper"]
 
 [project]
 name = "lboxd_scraper"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
   { name="Luke Gregorio", email="author@example.com" },
 ]
