@@ -27,3 +27,7 @@ Repository = "https://github.com/lukegregorio/lboxd-scraper"
 pythonpath = [
   "."
 ]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+bs4 = "^0.0.1"
